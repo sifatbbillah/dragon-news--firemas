@@ -1,76 +1,81 @@
-import React from "react";
-import { FaRegBookmark, FaShareAlt, FaStar, FaRegEye } from "react-icons/fa";
+import { FaEye, FaStar, FaShareAlt, FaRegBookmark } from "react-icons/fa";
+import { Link } from "react-router";
 
 const NewsCard = ({ news }) => {
-  const {
-    title,
-    rating,
-    total_view,
-    author,
-    thumbnail_url,
-    details,
-  } = news;
+  const { id, title, author, thumbnail_url, details, rating, total_view } =
+    news;
 
+  const formattedDate = new Date(
+    news.author.published_date
+  ).toLocaleDateString();
 
   return (
-    <div className="bg-base-100 shadow-md rounded-xl p-5 w-full max-w-xl mx-auto">
-      {/* Author Info */}
-      <div className="flex items-center justify-between">
+    <div className="card bg-base-100 shadow-md mb-6">
+      {/* Author + Share */}
+      <div className="flex bg-base-200 justify-between items-center p-4">
         <div className="flex items-center gap-3">
-          <img
-            src={author?.img}
-            alt={author?.name}
-            className="w-10 h-10 rounded-full"
-          />
+          <div className="avatar">
+            <div className="w-10 rounded-full">
+              <img src={author.img} alt={author.name} />
+            </div>
+          </div>
           <div>
-            <h3 className="font-semibold text-sm">{author?.name}</h3>
-            <p className="text-xs text-gray-500">
-              {new Date(author?.published_date).toLocaleDateString()}
-            </p>
+            <h2 className="font-bold text-sm">{author.name}</h2>
+            <p className="text-xs text-gray-500">{formattedDate}</p>
           </div>
         </div>
-        <div className="flex gap-3 text-gray-500 text-lg">
-          <FaRegBookmark className="cursor-pointer hover:text-primary" />
-          <FaShareAlt className="cursor-pointer hover:text-primary" />
-        </div>
+        <button className="text-gray-500 hover:text-primary flex gap-1">
+          <FaRegBookmark></FaRegBookmark>
+          <FaShareAlt />
+        </button>
       </div>
 
       {/* Title */}
-      <h2 className="text-lg sm:text-xl font-bold text-gray-900 mt-4">
-        {title}
-      </h2>
+      <div className="px-4 py-4">
+        <h2 className="text-lg font-bold text-primary  cursor-pointer">
+          {title}
+        </h2>
+      </div>
 
       {/* Image */}
-      <div className="my-3">
+      <div className="px-4 py-2">
         <img
           src={thumbnail_url}
-          alt="news"
-          className="w-full rounded-lg object-cover"
+          alt={title}
+          className="w-full h-48 object-cover rounded-md"
         />
       </div>
 
-      {/* Description */}
-      <p className="text-sm text-gray-600 leading-relaxed mb-3">
-        {details.length > 180 ? details.slice(0, 180) + "..." : details}
-        <span className="text-orange-500 font-semibold cursor-pointer">
-          {" "}
-          Read More
-        </span>
-      </p>
+      {/* Details */}
+      <div className="px-4  text-accent">
+        {details.length > 200 ? (
+          <>
+            {details.slice(0, 200)}...
+            <Link
+              to={`/news-details/${id}`}
+              className="text-primary font-semibold cursor-pointer hover:underline"
+            >
+              Read More
+            </Link>
+          </>
+        ) : (
+          details
+        )}
+      </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between border-t pt-3 mt-2 text-sm">
-        <div className="flex items-center gap-1 text-yellow-500">
-          {[...Array(rating?.number)].map((_, i) => (
+      <div className="flex justify-between items-center px-4 py-3 border-t border-base-200 mt-3">
+        {/* Rating */}
+        <div className="flex items-center gap-1 text-orange-400">
+          {Array.from({ length: rating.number }).map((_, i) => (
             <FaStar key={i} />
           ))}
-          <span className="ml-1 text-gray-700 font-semibold">
-            {rating?.number.toFixed(1)}
-          </span>
+          <span className="ml-2 text-gray-600">{rating.number}</span>
         </div>
 
-        <div className="flex items-center gap-1 text-gray-500">
-          <FaRegEye />
+        {/* Views */}
+        <div className="flex items-center gap-2 text-gray-500">
+          <FaEye />
           <span>{total_view}</span>
         </div>
       </div>

@@ -1,47 +1,44 @@
-import React, { useEffect, useState } from 'react';
-import { useLoaderData, useParams } from 'react-router';
-import NewsCard from '../components/NewsCard';
+import React, { useEffect, useState } from "react";
+import { useLoaderData, useParams } from "react-router";
+import NewsCard from "../components/NewsCard";
 
-const CategoriesNews = () => {
-    const {id} = useParams();
-    const data = useLoaderData();
-const [CategoriesNews, setCategoriesNews] = useState([]);
+const CategoryNews = () => {
+  const { id } = useParams(); //string
+  const data = useLoaderData();
 
+  const [categoryNews, setCategoryNews] = useState([]);
 
-    // console.log(id,data);
+  useEffect(() => {
+    if (id == "0") {
+      setCategoryNews(data);
+    } else if (id == "1") {
+      const filteredNews = data.filter(
+        (news) => news.others.is_today_pick == true
+      );
 
-    useEffect(() =>{
-        if(id=="0"){
-            setCategoriesNews(data);
-            return;
+      setCategoryNews(filteredNews);
+    } else {
+      const filteredNews = data.filter((news) => news.category_id == id);
+      setCategoryNews(filteredNews);
+    }
+  }, [id, data]);
 
-        }else if (id=="1"){
-    const filterednews = data .filter(news =>news .others.is_today_pick == true);
-    setCategoriesNews(filterednews);
-        }
-        else {
-const filterednews = data .filter(news =>news .category_id == id);
+  // console.log(id, data);
 
-setCategoriesNews(filterednews)
+  return (
+    <div>
+      <h2 className="font-bold mb-5">
+        Total <span className="text-secondary">{categoryNews.length}</span> news
+        Found
+      </h2>
 
-};
-    },[data,id])
-    return (
-        <div><h2 className='font-bold mb-5'>
-            Total <span> {CategoriesNews.length} News 
-                </span>
-                Found
-            </h2>
-
-            <div className='grid grid-cols-1 gap-5'>
-{
-    CategoriesNews.map(news => <NewsCard key={news.id} news= {news}>
-
-    </NewsCard>)
-}
-            </div>
-        </div>
-    );
+      <div className="grid grid-cols-1 gap-5">
+        {categoryNews.map((news) => (
+          <NewsCard key={news.id} news={news}></NewsCard>
+        ))}
+      </div>
+    </div>
+  );
 };
 
-export default CategoriesNews;
+export default CategoryNews;

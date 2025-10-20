@@ -1,44 +1,45 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom'; // use 'react-router-dom' not 'react-router'
-import user from '../assets/user.png'; 
-
+import React, { use } from "react";
+import { Link, NavLink } from "react-router";
+import userIcon from "../assets/user.png";
+import { AuthContext } from "../Provider/AuthProvider";
 const Navbar = () => {
-    return (
-        <nav className="flex justify-between items-center w-11/12 mx-auto py-4">
-            
-            {/* Empty left section (you can add logo later if needed) */}
-            <div></div>
-            
-            {/* Center nav links */}
-            <div className="flex gap-8 text-accent font-medium text-lg">
-                <NavLink 
-                    to="/" 
-                    className={({ isActive }) => isActive ? "text-primary underline" : ""}
-                >
-                    Home
-                </NavLink>
-                <NavLink 
-                    to="/about" 
-                    className={({ isActive }) => isActive ? "text-primary underline" : ""}
-                >
-                    About
-                </NavLink>
-                <NavLink 
-                    to="/career" 
-                    className={({ isActive }) => isActive ? "text-primary underline" : ""}
-                >
-                    Career
-                </NavLink>
-            </div>
-
-            {/* Right side: user icon + login button */}
-            <div className="flex items-center gap-3">
-                <img src={user} alt="user" className="w-8 h-8 rounded-full" />
-                <button className="btn btn-primary">Login</button>
-            </div>
-
-        </nav>
-    );
+  const { user, logOut } = use(AuthContext);
+  const handleLogOut = () => {
+    console.log("user trying to LogOut");
+    logOut()
+      .then(() => {
+        alert("You Logged Out successfully");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  return (
+    <div className="flex justify-between items-center">
+      <div className="">{user && user.email}</div>
+      <div className="nav flex gap-5 text-accent">
+        <NavLink to="/">Home</NavLink>
+        <NavLink to="/about">About</NavLink>
+        <NavLink to="/career">Career</NavLink>
+      </div>
+      <div className="login-btn flex gap-5">
+        <img
+          className="w-12 rounded-full"
+          src={`${user ? user.photoURL : userIcon}`}
+          alt=""
+        />
+        {user ? (
+          <button onClick={handleLogOut} className="btn btn-primary px-10 ">
+            LogOut
+          </button>
+        ) : (
+          <Link to="/auth/login" className="btn btn-primary px-10 ">
+            Login
+          </Link>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Navbar;

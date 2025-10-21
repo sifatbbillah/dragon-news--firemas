@@ -1,25 +1,72 @@
-import React from 'react';
-import { FcGoogle } from 'react-icons/fc';
-import { FaGithub } from 'react-icons/fa';
+import React, { useContext } from "react";
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa";
+import {
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signInWithPopup,
+  getAuth,
+} from "firebase/auth";
+import app from "../../firebase/fire-base";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../Provider/Authcontext";
+
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
 
 const SocialLogin = () => {
-    return (
-        <div className="text-center px-4 sm:px-6 md:px-0 py-5">
-            <h2 className="font-bold mb-5 text-lg sm:text-xl">Login with</h2>
+  const { setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-            <div className="flex flex-col sm:flex-row sm:justify-center gap-4 w-full max-w-md mx-auto">
-                <button className="btn btn-outline btn-secondary flex-1 py-3 flex items-center justify-center gap-2 min-w-[150px]">
-                    <FcGoogle className="text-xl" />
-                    Login with Google
-                </button>
+  const handleGoogleLogin = () => {
+    signInWithPopup(auth, googleProvider)
+      .then((result) => {
+        const user = result.user;
+        setUser(user);
+        navigate("/");
+      })
+      .catch((error) => alert(error.message));
+  };
 
-                <button className="btn btn-outline btn-primary flex-1 py-3 flex items-center justify-center gap-2 min-w-[150px]">
-                    <FaGithub className="text-xl" />
-                    Login with Github
-                </button>
-            </div>
-        </div>
-    );
+  const handleGithubLogin = () => {
+    signInWithPopup(auth, githubProvider)
+      .then((result) => {
+        const user = result.user;
+        setUser(user);
+        navigate("/");
+      })
+      .catch((error) => alert(error.message));
+  };
+
+  return (
+    <div className="text-center w-full mt-4 sm:mt-6">
+      <h2 className="font-semibold mb-4 text-base sm:text-lg md:text-xl">
+        Login with
+      </h2>
+
+      {/* Responsive button layout */}
+      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:justify-center gap-4 w-full sm:w-4/5 md:w-3/4 lg:w-2/3 xl:w-1/2 mx-auto">
+        {/* Google */}
+        <button
+          onClick={handleGoogleLogin}
+          className="btn btn-outline btn-secondary flex-1 py-3 flex items-center justify-center gap-2 rounded-xl shadow-md hover:scale-105 transition-transform"
+        >
+          <FcGoogle className="text-xl md:text-2xl" />
+          <span className="text-sm sm:text-base md:text-lg">Google</span>
+        </button>
+
+        {/* Github */}
+        <button
+          onClick={handleGithubLogin}
+          className="btn btn-outline btn-primary flex-1 py-3 flex items-center justify-center gap-2 rounded-xl shadow-md hover:scale-105 transition-transform"
+        >
+          <FaGithub className="text-xl md:text-2xl" />
+          <span className="text-sm sm:text-base md:text-lg">Github</span>
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default SocialLogin;

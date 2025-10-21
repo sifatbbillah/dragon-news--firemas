@@ -1,13 +1,25 @@
+import React, { useContext } from "react";
 import { FaEye, FaStar, FaShareAlt, FaRegBookmark } from "react-icons/fa";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../Provider/Authcontext";
 
 const NewsCard = ({ news }) => {
-  const { id, title, author, thumbnail_url, details, rating, total_view } =
-    news;
+  const { user } = useContext(AuthContext); // get logged-in user
+  const navigate = useNavigate();
 
-  const formattedDate = new Date(
-    news.author.published_date
-  ).toLocaleDateString();
+  const { id, title, author, thumbnail_url, details, rating, total_view } = news;
+
+  const formattedDate = new Date(author.published_date).toLocaleDateString();
+
+  // Handle read more click
+  const handleReadMore = () => {
+    if (user) {
+      navigate(`/news-details/${id}`);
+    } else {
+      alert("Please login to read full news!");
+      navigate("../pages/Login.jsx");
+    }
+  };
 
   return (
     <div className="card bg-base-100 shadow-md mb-6">
@@ -25,14 +37,14 @@ const NewsCard = ({ news }) => {
           </div>
         </div>
         <button className="text-gray-500 hover:text-primary flex gap-1">
-          <FaRegBookmark></FaRegBookmark>
+          <FaRegBookmark />
           <FaShareAlt />
         </button>
       </div>
 
       {/* Title */}
       <div className="px-4 py-4">
-        <h2 className="text-lg font-bold text-primary  cursor-pointer">
+        <h2 className="text-lg font-bold text-primary cursor-pointer">
           {title}
         </h2>
       </div>
@@ -47,16 +59,16 @@ const NewsCard = ({ news }) => {
       </div>
 
       {/* Details */}
-      <div className="px-4  text-accent">
+      <div className="px-4 text-accent">
         {details.length > 200 ? (
           <>
             {details.slice(0, 200)}...
-            <Link
-              to={`/news-details/${id}`}
-              className="text-primary font-semibold cursor-pointer hover:underline"
+            <button
+              onClick={handleReadMore}
+              className="text-primary font-semibold cursor-pointer hover:underline ml-1"
             >
               Read More
-            </Link>
+            </button>
           </>
         ) : (
           details
